@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyLogic : MonoBehaviour
 {
@@ -11,15 +12,20 @@ public class EnemyLogic : MonoBehaviour
 
     [SerializeField] private Transform playerTransform;
 
+    private NavMeshAgent agent;
+
     private void Start()
     {
         healthBar.SetMaxHealth(enemyHealth);
+        agent = transform.GetComponent<NavMeshAgent>();
     }
 
     private void Update()
     {
-        Vector3 point = new Vector3(playerTransform.position.x, transform.position.y, playerTransform.position.z);
-        transform.LookAt(point);
+        var playerTransformPosition = playerTransform.position;
+        agent.SetDestination(playerTransformPosition);
+        //Vector3 point = new Vector3(playerTransformPosition.x, transform.position.y, playerTransformPosition.z);
+        //transform.LookAt(point);
     }
 
     public void ApplyDamage(int damage)
