@@ -22,12 +22,27 @@ public class EnemyLogic : MonoBehaviour
 
     private void Update()
     {
-        var playerTransformPosition = playerTransform.position;
-        agent.SetDestination(playerTransformPosition);
-        //Vector3 point = new Vector3(playerTransformPosition.x, transform.position.y, playerTransformPosition.z);
-        //transform.LookAt(point);
+        
+        if (Vector3.Distance(transform.position, playerTransform.position) < 5.5f)
+        {
+            agent.isStopped = true;
+            Vector3 point = new Vector3(playerTransform.position.x, transform.position.y, playerTransform.position.z);
+            SmoothlyRotateTowardsObj(playerTransform, 0.01f);
+            //transform.LookAt(point);
+        }
+        else
+        {
+            agent.isStopped = false;
+            agent.SetDestination(playerTransform.position); 
+        }
     }
 
+    private void SmoothlyRotateTowardsObj(Transform target, float speed)
+    {
+        Vector3 direction = (target.position - transform.position).normalized;
+        Quaternion rotationGoal = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotationGoal, speed); 
+    }
     public void ApplyDamage(int damage)
     {
         enemyHealth -= damage;
