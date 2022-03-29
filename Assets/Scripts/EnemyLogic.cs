@@ -11,6 +11,7 @@ public class EnemyLogic : MonoBehaviour
     public HealthBar healthBar;
 
     [SerializeField] private Transform playerTransform;
+    [SerializeField] private Animator animator;
 
     private NavMeshAgent agent;
 
@@ -22,7 +23,7 @@ public class EnemyLogic : MonoBehaviour
 
     private void Update()
     {
-        
+        animator.SetFloat("Blend", agent.velocity.magnitude);
         if (Vector3.Distance(transform.position, playerTransform.position) < 5.5f)
         {
             agent.isStopped = true;
