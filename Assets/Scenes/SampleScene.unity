@@ -3301,7 +3301,7 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.81
   m_Speed: 3.5
-  m_Acceleration: 8
+  m_Acceleration: 12.29
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
@@ -3326,6 +3326,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBar: {fileID: 2056228907}
   playerTransform: {fileID: 713847217}
+  animator: {fileID: 7941852458290645902}
+  material: {fileID: 2100000, guid: bbb08bfac50ebc941a14102119a874c2, type: 2}
 --- !u!95 &1905370521
 Animator:
   serializedVersion: 3
@@ -3727,6 +3729,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBar: {fileID: 2056228907}
   playerTransform: {fileID: 713847217}
+  animator: {fileID: 0}
+  material: {fileID: 0}
 --- !u!136 &2145967555
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3943,7 +3947,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: 0aef834fe09fe1e4a966a56d73603eb6, type: 3}
+  - {fileID: 2100000, guid: bbb08bfac50ebc941a14102119a874c2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4413,6 +4417,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7312983877327933751}
+  - component: {fileID: 7941852458290645902}
   m_Layer: 0
   m_Name: pigeon
   m_TagString: Untagged
@@ -4420,6 +4425,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!95 &7941852458290645902
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7941852458290645901}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 665f1a0b83192a94783641c7b9caa86c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!23 &8008286324130075811
 MeshRenderer:
   m_ObjectHideFlags: 0
