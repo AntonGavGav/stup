@@ -11,22 +11,28 @@ public class PlayerLogic : MonoBehaviour
     [SerializeField] private float speed = 12f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private Transform groundCheck;
+    [SerializeField] private GameObject arm;
+    private Animator clockAnimator;
     private float groundDistance = 0.4f;
+    private int playerHealth = 100;
     public LayerMask groundMask;
+    public HealthBar healthBar;
     
-
     private Vector3 velocity;
     private bool isGrounded;
-    
-    
-    
 
-    // Update is called once per frame
-    
+
+    private void Start()
+    {
+        clockAnimator = arm.transform.GetComponent<Animator>();
+        healthBar.SetMaxHealth(playerHealth);
+    }
+
     private void FixedUpdate()
     {
         Gravity();
         Movement();
+        ShowClock();
     }
 
     void Movement()
@@ -48,5 +54,27 @@ public class PlayerLogic : MonoBehaviour
         characterController.Move((velocity * Time.deltaTime));
     }
 
-    
+    void ShowClock()
+    {
+        if (Input.GetKey(KeyCode.C))
+        {
+            arm.SetActive(true);
+            clockAnimator.SetBool("ShowClock", true);   
+        }
+        else
+        {
+            clockAnimator.SetBool("ShowClock", false);
+        }
+    }
+
+    public void ArmSetActiveFalse()
+    {
+        arm.SetActive(false);
+    }
+
+    public void GetDamage(int damage)
+    {
+        playerHealth -= damage;
+        healthBar.SetHealth(playerHealth);
+    }
 }
