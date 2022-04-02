@@ -59,6 +59,7 @@ public class PlayerLogic : MonoBehaviour
         if (Input.GetKey(KeyCode.C))
         {
             arm.SetActive(true);
+            clockAnimator.enabled = true;
             clockAnimator.SetBool("ShowClock", true);   
         }
         else
@@ -70,9 +71,11 @@ public class PlayerLogic : MonoBehaviour
     public void ArmSetActiveFalse()
     {
         arm.SetActive(false);
+
+        clockAnimator.enabled = false;
     }
 
-    public void GetDamage(int damage)
+    public void SendDamage(int damage)
     {
         playerHealth -= damage;
         healthBar.SetHealth(playerHealth);
