@@ -29,7 +29,7 @@ public class BreadWeapon : MonoBehaviour
                 {
                     state = State.Atacking;
                     animator.SetTrigger("Attack");
-                    Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2f);
+                    Collider[] hitColliders = Physics.OverlapSphere(transform.position, 1.7f);
                     foreach (var hitCollider in hitColliders)
                     {
                         hitCollider.SendMessage("ApplyDamage", UnityEngine.Random.Range(5, 20), SendMessageOptions.DontRequireReceiver);

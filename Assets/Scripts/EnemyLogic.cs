@@ -14,14 +14,15 @@ public class EnemyLogic : MonoBehaviour
 
     [SerializeField] private Transform playerTransform;
     [SerializeField] private Animator animator;
-    [FormerlySerializedAs("spriteRender")] [SerializeField] private Material material;
+    [FormerlySerializedAs("material")] [FormerlySerializedAs("spriteRender")] [SerializeField] private Material Defualtmaterial;
+    [FormerlySerializedAs("material")] [FormerlySerializedAs("spriteRender")] [SerializeField] private Material Redmaterial;
 
     private NavMeshAgent agent;
     private Color defaultColor;
     
     private void Start()
     {
-        defaultColor = material.color;
+        defaultColor = Defualtmaterial.color;
         
         healthBar.SetMaxHealth(enemyHealth);
         agent = transform.GetComponent<NavMeshAgent>();
@@ -59,17 +60,17 @@ public class EnemyLogic : MonoBehaviour
         healthBar.SetHealth(enemyHealth);
         if (enemyHealth <= 0)
         {
-            material.color = new Color(1f, 0.30196078f, 0.30196078f);
+            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().sharedMaterial = Redmaterial;
             Destroy(gameObject);
-            material.color = defaultColor;
+            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().sharedMaterial = Defualtmaterial;
         }
     }
 
     IEnumerator SwitchColors()
     {
         yield return new WaitForSeconds(0.05f);
-        material.color = new Color(1f, 0.30196078f, 0.30196078f);
+        transform.GetChild(0).GetChild(0).GetComponent<Renderer>().sharedMaterial = Redmaterial;
         yield return new WaitForSeconds(timeForColorChanging);
-        material.color = defaultColor;
+        transform.GetChild(0).GetChild(0).GetComponent<Renderer>().sharedMaterial = Defualtmaterial;
     }
 }
