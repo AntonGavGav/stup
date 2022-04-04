@@ -7,6 +7,10 @@ public class PigeonAtack : MonoBehaviour
     public PlayerLogic playerLogic;
     
     public void Atack(){
-        playerLogic.SendDamage(10);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 1f);
+        foreach (var hitCollider in hitColliders)
+        {
+            hitCollider.SendMessage("SendDamage", 10, SendMessageOptions.DontRequireReceiver);
+        }
     }
 }
