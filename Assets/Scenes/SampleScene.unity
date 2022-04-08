@@ -842,7 +842,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 785ea2e6dc58da747a2c273a1ba49b0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 963194228}
 --- !u!1 &390712707
 GameObject:
   m_ObjectHideFlags: 0
@@ -3938,6 +3937,7 @@ MonoBehaviour:
   healthBar: {fileID: 2056228907}
   playerTransform: {fileID: 713847217}
   animator: {fileID: 7941852458290645902}
+  damageText: {fileID: 8561876802440617830, guid: 8aa4ffc14d39cd84f9b5a4b358c9a15e, type: 3}
   Defualtmaterial: {fileID: 2100000, guid: bbb08bfac50ebc941a14102119a874c2, type: 2}
   Redmaterial: {fileID: 2100000, guid: 13d571d1726f3ae4ba253c28d5871683, type: 2}
 --- !u!1 &2005681989
@@ -4310,6 +4310,7 @@ MonoBehaviour:
   healthBar: {fileID: 2056228907}
   playerTransform: {fileID: 713847217}
   animator: {fileID: 0}
+  damageText: {fileID: 0}
   Defualtmaterial: {fileID: 0}
   Redmaterial: {fileID: 0}
 --- !u!136 &2145967555

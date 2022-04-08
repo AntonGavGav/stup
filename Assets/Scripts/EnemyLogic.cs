@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
@@ -14,6 +15,7 @@ public class EnemyLogic : MonoBehaviour
 
     [SerializeField] private Transform playerTransform;
     [SerializeField] private Animator animator;
+    [SerializeField] private GameObject damageText;
     [FormerlySerializedAs("material")] [FormerlySerializedAs("spriteRender")] [SerializeField] private Material Defualtmaterial;
     [FormerlySerializedAs("material")] [FormerlySerializedAs("spriteRender")] [SerializeField] private Material Redmaterial;
 
@@ -55,6 +57,8 @@ public class EnemyLogic : MonoBehaviour
     }
     public void ApplyDamage(int damage)
     {
+        GameObject damageText1 =  Instantiate(damageText, transform.position, Quaternion.identity);
+        damageText1.transform.GetComponent<TextMeshPro>().text = damage.ToString();
         StartCoroutine("SwitchColors");
         enemyHealth -= damage;
         healthBar.SetHealth(enemyHealth);
