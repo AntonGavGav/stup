@@ -91,9 +91,10 @@ public class EnemyLogic : MonoBehaviour
     void Death()
     {
         isDead = true;
-        animator.enabled = false;
-        agent.enabled = false;
-        transform.GetComponent<CapsuleCollider>().enabled = false;
+        Destroy(animator);
+        Destroy(agent);
+        Destroy(transform.GetComponent<CapsuleCollider>());
+        Destroy(transform.GetChild(0).GetComponent<PigeonAtack>());
         healthBar.HealthBarDestroy();
         Collider[] colliders = gameObject.GetComponentsInChildren<Collider>();
         Rigidbody[] rigidbodies = gameObject.GetComponentsInChildren<Rigidbody>();
@@ -103,7 +104,8 @@ public class EnemyLogic : MonoBehaviour
         foreach (Rigidbody rb in rigidbodies)
         {
             rb.isKinematic = false;
+            rb.AddExplosionForce(10f, transform.position, 5f, 3f, ForceMode.Impulse);;
         }
-        torso.AddForce(transform.forward*10, ForceMode.Impulse);
+        Destroy(this);
     }
 }
