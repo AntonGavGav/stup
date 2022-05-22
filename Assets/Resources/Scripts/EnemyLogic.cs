@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class EnemyLogic : MonoBehaviour
 {
@@ -12,24 +13,29 @@ public class EnemyLogic : MonoBehaviour
     private float timeForColorChanging = 0.15f;
 
     public HealthBar healthBar;
-
+    private Constants.PgColor color;
+    
     [SerializeField] private Transform playerTransform;
     [SerializeField] private GameObject damageText;
-    [SerializeField] private Rigidbody torso;
-    [FormerlySerializedAs("material")] [FormerlySerializedAs("spriteRender")] [SerializeField] private Material Defualtmaterial;
-    [FormerlySerializedAs("material")] [FormerlySerializedAs("spriteRender")] [SerializeField] private Material Redmaterial;
-    
+    [SerializeField] private TextMeshProUGUI name;
+
     private Animator animator;
     private NavMeshAgent agent;
-    private Color defaultColor;
     private bool isDead = false;
+    private Renderer pigeonMaterial;
+    private MaterialSet materialSet;
+    
     
     private void Start()
     {
+        color = (Constants.PgColor) Random.Range(0, 2);
         animator = transform.GetChild(0).GetComponent<Animator>();
-        defaultColor = Defualtmaterial.color;
         healthBar.SetMaxHealth(enemyHealth);
         agent = transform.GetComponent<NavMeshAgent>();
+        pigeonMaterial = transform.GetChild(0).GetChild(0).GetComponent<Renderer>();
+        materialSet = Constants.colors[color];
+        pigeonMaterial.sharedMaterial = materialSet.primary;
+        name.text = Constants.PgNames[Random.Range(0, Constants.PgNames.Length + 1)];
     }
 
     private void Update()
@@ -73,9 +79,9 @@ public class EnemyLogic : MonoBehaviour
             if (enemyHealth <= 0)
             {
                 Death();
-                transform.GetChild(0).GetChild(0).GetComponent<Renderer>().sharedMaterial = Redmaterial;
+                transform.GetChild(0).GetChild(0).GetComponent<Renderer>().sharedMaterial = materialSet.secondary;
                 //Destroy(gameObject);
-                transform.GetChild(0).GetChild(0).GetComponent<Renderer>().sharedMaterial = Defualtmaterial;
+                transform.GetChild(0).GetChild(0).GetComponent<Renderer>().sharedMaterial = materialSet.primary;
             }
         }
     }
@@ -83,9 +89,9 @@ public class EnemyLogic : MonoBehaviour
     IEnumerator SwitchColors()
     {
         yield return new WaitForSeconds(0.05f);
-        transform.GetChild(0).GetChild(0).GetComponent<Renderer>().sharedMaterial = Redmaterial;
+        pigeonMaterial.sharedMaterial = materialSet.secondary;
         yield return new WaitForSeconds(timeForColorChanging);
-        transform.GetChild(0).GetChild(0).GetComponent<Renderer>().sharedMaterial = Defualtmaterial;
+        pigeonMaterial.sharedMaterial = materialSet.primary;
     }
 
     void Death()
