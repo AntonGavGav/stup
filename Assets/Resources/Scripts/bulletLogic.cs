@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using EZCameraShake;
 using UnityEngine;
 
 public class bulletLogic : MonoBehaviour
@@ -13,14 +14,9 @@ public class bulletLogic : MonoBehaviour
     private float explosionRadius = 5f;
     private float damage = 120f;
 
-    private void Start()
-    {
-        
-    }
-
     void Explode()
     {
-        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        Instantiate(explosionPrefab, transform.position, explosionPrefab.transform.rotation);
         Vector3 explodePos = transform.position;
         Collider[] colliders = Physics.OverlapSphere(explodePos, explosionRadius);
         foreach (Collider hit in colliders)
@@ -40,10 +36,9 @@ public class bulletLogic : MonoBehaviour
             {
                 rb.AddExplosionForce(explosionForce, explodePos, explosionRadius, 3f, ForceMode.Impulse);
             }
-
-            
         }
-        
+
+        CameraShaker.Instance.ShakeOnce(5f, 10f, .1f, 1f);
         Destroy(gameObject);
     }
 

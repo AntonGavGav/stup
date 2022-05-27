@@ -35,7 +35,7 @@ public class EnemyLogic : MonoBehaviour
         pigeonMaterial = transform.GetChild(0).GetChild(0).GetComponent<Renderer>();
         materialSet = Constants.colors[color];
         pigeonMaterial.sharedMaterial = materialSet.primary;
-        name.text = Constants.PgNames[Random.Range(0, Constants.PgNames.Length + 1)];
+        name.text = Constants.PgNames[Random.Range(0, Constants.PgNames.Length)];
     }
 
     private void Update()
