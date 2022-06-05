@@ -18,10 +18,12 @@ public class EnemyLogic : MonoBehaviour
     [SerializeField] private Transform playerTransform;
     [SerializeField] private GameObject damageText;
     [SerializeField] private TextMeshProUGUI name;
+    [SerializeField] private Transform pigeonHolderTransform;
 
     private Animator animator;
     private NavMeshAgent agent;
     private bool isDead = false;
+    private bool isTaken = false;
     private Renderer pigeonMaterial;
     private MaterialSet materialSet;
     
@@ -40,7 +42,7 @@ public class EnemyLogic : MonoBehaviour
 
     private void Update()
     {
-        if (!isDead)
+        if (!isDead && !isTaken)
         {
             animator.SetFloat("Blend", agent.velocity.magnitude);
             if (Vector3.Distance(transform.position, playerTransform.position) < 2f)
@@ -59,6 +61,11 @@ public class EnemyLogic : MonoBehaviour
                 agent.SetDestination(playerTransform.position);
             }
         }
+        else if (isTaken && !isDead)
+        {
+            transform.position = pigeonHolderTransform.position;
+        }
+        
     }
 
     private void SmoothlyRotateTowardsObj(Transform target, float speed)
@@ -69,7 +76,7 @@ public class EnemyLogic : MonoBehaviour
     }
     public void ApplyDamage(int damage)
     {
-        if (!isDead)
+        if (!isDead && !isTaken)
         {
             GameObject damageText1 = Instantiate(damageText, transform.position, Quaternion.identity);
             damageText1.transform.GetComponent<TextMeshPro>().text = damage.ToString();
@@ -94,7 +101,7 @@ public class EnemyLogic : MonoBehaviour
         pigeonMaterial.sharedMaterial = materialSet.primary;
     }
 
-    void Death()
+    private void Death()
     {
         isDead = true;
         Destroy(animator);
@@ -114,4 +121,25 @@ public class EnemyLogic : MonoBehaviour
         }
         Destroy(this);
     }
+
+    public void Take()
+    {
+        transform.SetParent(pigeonHolderTransform.parent);
+        isTaken = true;
+        agent.enabled = false;
+        transform.GetComponent<CapsuleCollider>().enabled = false;
+        healthBar.TurnOffBillboard();
+        transform.position = pigeonHolderTransform.position;
+        transform.rotation = pigeonHolderTransform.rotation;
+    }
+
+    public void Place()
+    {
+        transform.SetParent(null);
+        isTaken = false;
+        agent.enabled = true;
+        transform.GetComponent<CapsuleCollider>().enabled = true;
+        healthBar.TurnOnBillboard();
+    }
+    
 }

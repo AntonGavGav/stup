@@ -18,15 +18,15 @@ public class Constants
         {
             PgColor.BLACK, new MaterialSet
             {
-                primary = Resources.Load<Material>("Coloring/Materials/PigeonMat/PigeonMat"),
-                secondary = Resources.Load<Material>("Coloring/Materials/PigeonMat/PigeonMatRed")
+                primary = UnityEngine.Resources.Load<Material>("Coloring/Materials/PigeonMat/PigeonMat"),
+                secondary = UnityEngine.Resources.Load<Material>("Coloring/Materials/PigeonMat/PigeonMatRed")
             }
         },
         {
             PgColor.WHITE, new MaterialSet
             {
-                primary = Resources.Load<Material>("Coloring/Materials/PigeonMat/PigeonWhiteMat"),
-                secondary = Resources.Load<Material>("Coloring/Materials/PigeonMat/PigeonWhiteMatRed")
+                primary = UnityEngine.Resources.Load<Material>("Coloring/Materials/PigeonMat/PigeonWhiteMat"),
+                secondary = UnityEngine.Resources.Load<Material>("Coloring/Materials/PigeonMat/PigeonWhiteMatRed")
             }
         }
     };

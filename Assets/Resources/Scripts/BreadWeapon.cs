@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Resources.Scripts;
 using UnityEngine;
 using Random = System.Random;
 
 public class BreadWeapon : MonoBehaviour
 {
+    private Weapon weapon = new Weapon("Bread", 20f, 0f);
     public enum State
     {
         ReadyToAtack,
@@ -32,7 +34,7 @@ public class BreadWeapon : MonoBehaviour
                     Collider[] hitColliders = Physics.OverlapSphere(transform.position, 1.5f);
                     foreach (var hitCollider in hitColliders)
                     {
-                        hitCollider.SendMessage("ApplyDamage", UnityEngine.Random.Range(5, 20), SendMessageOptions.DontRequireReceiver);
+                        hitCollider.SendMessage("ApplyDamage", UnityEngine.Random.Range(5, (int)weapon.damage), SendMessageOptions.DontRequireReceiver);
                     }
                 }
                 break;

@@ -11,8 +11,7 @@ public class PlayerLogic : MonoBehaviour
     [SerializeField] private float speed = 12f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private Transform groundCheck;
-    [SerializeField] private GameObject arm;
-    private Animator clockAnimator;
+    
     private float groundDistance = 0.4f;
     private int playerHealth = 100;
     public LayerMask groundMask;
@@ -24,7 +23,6 @@ public class PlayerLogic : MonoBehaviour
 
     private void Start()
     {
-        clockAnimator = arm.transform.GetComponent<Animator>();
         healthBar.SetMaxHealth(playerHealth);
     }
 
@@ -32,7 +30,6 @@ public class PlayerLogic : MonoBehaviour
     {
         Gravity();
         Movement();
-        ShowClock();
     }
 
     void Movement()
@@ -53,31 +50,15 @@ public class PlayerLogic : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
         characterController.Move((velocity * Time.deltaTime));
     }
+    
 
-    void ShowClock()
-    {
-        if (Input.GetKey(KeyCode.C))
-        {
-            arm.SetActive(true);
-            clockAnimator.enabled = true;
-            clockAnimator.SetBool("ShowClock", true);   
-        }
-        else
-        {
-            clockAnimator.SetBool("ShowClock", false);
-        }
-    }
-
-    public void ArmSetActiveFalse()
-    {
-        arm.SetActive(false);
-
-        clockAnimator.enabled = false;
-    }
-
+    
+    
     public void SendDamage(int damage)
     {
         playerHealth -= damage;
         healthBar.SetHealth(playerHealth);
     }
+
+    
 }

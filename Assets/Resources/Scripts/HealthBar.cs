@@ -28,4 +28,15 @@ public class HealthBar : MonoBehaviour
     {
         Destroy(transform.parent.gameObject);
     }
+
+    public void TurnOffBillboard()
+    {
+        transform.GetComponentInParent<Bilboard>().enabled = false;
+        transform.parent.localRotation = Quaternion.identity;
+    }
+
+    public void TurnOnBillboard()
+    {
+        transform.GetComponentInParent<Bilboard>().enabled = true;
+    }
 }
