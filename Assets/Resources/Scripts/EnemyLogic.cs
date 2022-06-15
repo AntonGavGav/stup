@@ -9,6 +9,8 @@ using Random = UnityEngine.Random;
 
 public class EnemyLogic : MonoBehaviour
 {
+    public bool isReadyToBeHold = false;
+    
     private int enemyHealth = 100;
     private float timeForColorChanging = 0.15f;
 
@@ -19,6 +21,7 @@ public class EnemyLogic : MonoBehaviour
     [SerializeField] private GameObject damageText;
     [SerializeField] private TextMeshProUGUI name;
     [SerializeField] private Transform pigeonHolderTransform;
+    [SerializeField] private Outline outline;
 
     private Animator animator;
     private NavMeshAgent agent;
@@ -38,6 +41,7 @@ public class EnemyLogic : MonoBehaviour
         materialSet = Constants.colors[color];
         pigeonMaterial.sharedMaterial = materialSet.primary;
         name.text = Constants.PgNames[Random.Range(0, Constants.PgNames.Length)];
+        outline.enabled = false;
     }
 
     private void Update()
@@ -66,6 +70,26 @@ public class EnemyLogic : MonoBehaviour
             transform.position = pigeonHolderTransform.position;
         }
         
+    }
+
+    private void OnMouseOver()
+    {
+        if (Vector3.Distance(playerTransform.position, transform.position) < 3f)
+        {
+            outline.enabled = true;
+            isReadyToBeHold = true;
+        }
+        else
+        {
+            outline.enabled = false;
+            isReadyToBeHold = false;
+        }
+    }
+
+    private void OnMouseExit()
+    {
+        outline.enabled = false;
+        isReadyToBeHold = false;
     }
 
     private void SmoothlyRotateTowardsObj(Transform target, float speed)

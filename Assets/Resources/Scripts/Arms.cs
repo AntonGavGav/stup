@@ -11,6 +11,7 @@ public class Arms : MonoBehaviour
     private Animator rightHandAnimator;
     private bool isPigeonInHands = false;
     public bool isWatchingTime = false;
+    
 
     private void Start()
     {
@@ -51,11 +52,20 @@ public class Arms : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.H) && !isPigeonInHands && !isWatchingTime)
         {
-            LeftArm.SetActive(true);
-            leftHandAnimator.enabled = true;
-            rightHandAnimator.SetBool("HoldPigeon", true);
-            leftHandAnimator.SetBool("HoldPigeon", true);
-            isPigeonInHands = true;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if(Physics.Raycast(ray, out hit) && hit.transform.GetComponent<EnemyLogic>() != null)
+            {
+                if (hit.transform.GetComponent<EnemyLogic>().isReadyToBeHold)
+                {
+                    LeftArm.SetActive(true);
+                    leftHandAnimator.enabled = true;
+                    rightHandAnimator.SetBool("HoldPigeon", true);
+                    leftHandAnimator.SetBool("HoldPigeon", true);
+                    isPigeonInHands = true;
+                }
+            }
+            
         }
         else if(Input.GetKeyDown(KeyCode.H) && isPigeonInHands && !isWatchingTime)
         {
