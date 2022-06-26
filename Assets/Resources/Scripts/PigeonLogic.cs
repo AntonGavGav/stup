@@ -7,11 +7,11 @@ using UnityEngine.AI;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-public class EnemyLogic : MonoBehaviour
+public class PigeonLogic : MonoBehaviour
 {
     public bool isReadyToBeHold = false;
     
-    private int enemyHealth = 100;
+    private int enemyHealth;
     private float timeForColorChanging = 0.15f;
 
     public HealthBar healthBar;
@@ -22,26 +22,30 @@ public class EnemyLogic : MonoBehaviour
     [SerializeField] private TextMeshProUGUI name;
     [SerializeField] private Transform pigeonHolderTransform;
     [SerializeField] private Outline outline;
+    [SerializeField] private GameObject featherParticle;
 
     private Animator animator;
     private NavMeshAgent agent;
     private bool isDead = false;
-    private bool isTaken = false;
+    public bool isTaken = false;
     private Renderer pigeonMaterial;
     private MaterialSet materialSet;
     
+    public enum State
+    {
+        GoingNowhere,
+        GoingToPlayer,
+        RunningFromPlayer,
+        InHands
+    }
     
     private void Start()
     {
-        color = (Constants.PgColor) Random.Range(0, 2);
         animator = transform.GetChild(0).GetComponent<Animator>();
-        healthBar.SetMaxHealth(enemyHealth);
         agent = transform.GetComponent<NavMeshAgent>();
         pigeonMaterial = transform.GetChild(0).GetChild(0).GetComponent<Renderer>();
-        materialSet = Constants.colors[color];
-        pigeonMaterial.sharedMaterial = materialSet.primary;
-        name.text = Constants.PgNames[Random.Range(0, Constants.PgNames.Length)];
         outline.enabled = false;
+        SetDifferenceOnStart();
     }
 
     private void Update()
@@ -53,10 +57,7 @@ public class EnemyLogic : MonoBehaviour
             {
                 animator.SetBool("Atack", true);
                 agent.isStopped = true;
-                Vector3 point = new Vector3(playerTransform.position.x, transform.position.y,
-                    playerTransform.position.z);
                 SmoothlyRotateTowardsObj(playerTransform, 0.01f);
-                //transform.LookAt(point);
             }
             else
             {
@@ -97,6 +98,21 @@ public class EnemyLogic : MonoBehaviour
         Vector3 direction = (target.position - transform.position).normalized;
         Quaternion rotationGoal = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotationGoal, speed); 
+    }
+
+    private void SetDifferenceOnStart()
+    {
+        enemyHealth = Random.Range(50, 150);
+        color = (Constants.PgColor) Random.Range(0, 2);
+        healthBar.SetMaxHealth(enemyHealth);
+        name.text = Constants.PgNames[Random.Range(0, Constants.PgNames.Length)];
+        materialSet = Constants.colors[color];
+        pigeonMaterial.sharedMaterial = materialSet.primary;
+        agent.speed = Random.Range(2f, 5f);
+        agent.acceleration = Random.Range(11f, 13f);
+        agent.angularSpeed = Random.Range(120f, 400f);
+        float scale = Random.Range(0.55f, 0.6f);
+        transform.localScale = new Vector3(scale,scale,scale);
     }
     public void ApplyDamage(int damage)
     {
@@ -148,13 +164,15 @@ public class EnemyLogic : MonoBehaviour
 
     public void Take()
     {
+        
         transform.SetParent(pigeonHolderTransform.parent);
-        isTaken = true;
         agent.enabled = false;
         transform.GetComponent<CapsuleCollider>().enabled = false;
         healthBar.TurnOffBillboard();
         transform.position = pigeonHolderTransform.position;
         transform.rotation = pigeonHolderTransform.rotation;
+        Instantiate(featherParticle, transform.GetChild(0).position, Quaternion.identity);
+        isTaken = true;
     }
 
     public void Place()

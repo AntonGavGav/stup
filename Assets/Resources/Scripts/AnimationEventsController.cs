@@ -8,7 +8,7 @@ public class AnimationEventsController : MonoBehaviour
     [SerializeField] private GameObject LeftArm;
     private Animator leftHandAnimator;
     public Arms _arms;
-    public EnemyLogic enemyLogic;
+    private PigeonLogic enemyLogic;
     private void Start()
     {
         leftHandAnimator = LeftArm.transform.GetComponent<Animator>();
@@ -16,12 +16,14 @@ public class AnimationEventsController : MonoBehaviour
 
     public void AnimateTakePigeon()
     {
+        enemyLogic = _arms.pigeonToBeHoldLogic;
         enemyLogic.Take();
     }
 
     public void AnimatePlacePigeon()
     {
         enemyLogic.Place();
+        enemyLogic = null;
     }
 
     public void EndOfClockAnim()

@@ -7,6 +7,7 @@ public class Arms : MonoBehaviour
 {
     private GameObject LeftArm;
     private GameObject RightArm;
+    public PigeonLogic pigeonToBeHoldLogic;
     private Animator leftHandAnimator;
     private Animator rightHandAnimator;
     private bool isPigeonInHands = false;
@@ -54,9 +55,10 @@ public class Arms : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if(Physics.Raycast(ray, out hit) && hit.transform.GetComponent<EnemyLogic>() != null)
+            if(Physics.Raycast(ray, out hit) && hit.transform.GetComponent<PigeonLogic>() != null)
             {
-                if (hit.transform.GetComponent<EnemyLogic>().isReadyToBeHold)
+                pigeonToBeHoldLogic = hit.transform.GetComponent<PigeonLogic>();
+                if (pigeonToBeHoldLogic.isReadyToBeHold)
                 {
                     LeftArm.SetActive(true);
                     leftHandAnimator.enabled = true;
@@ -67,8 +69,9 @@ public class Arms : MonoBehaviour
             }
             
         }
-        else if(Input.GetKeyDown(KeyCode.H) && isPigeonInHands && !isWatchingTime)
+        else if(Input.GetKeyDown(KeyCode.H) && isPigeonInHands && !isWatchingTime && pigeonToBeHoldLogic.isTaken)
         {
+            pigeonToBeHoldLogic = null;
             rightHandAnimator.SetBool("HoldPigeon", false);
             leftHandAnimator.SetBool("HoldPigeon", false);
             isPigeonInHands = false;
