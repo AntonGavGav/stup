@@ -9,14 +9,17 @@ using Random = UnityEngine.Random;
 
 public class PigeonLogic : MonoBehaviour
 {
-    public bool isReadyToBeHold = false;
+    [HideInInspector]public bool isReadyToBeHold = false;
     
     private int enemyHealth;
+    private float pigeonSpeed;
+    private int pigeonRunningTriggerDistance = 6;
     private float timeForColorChanging = 0.15f;
-
-    public HealthBar healthBar;
+    
     private Constants.PgColor color;
     
+    [Header("EasierToInsertObjects")]
+    public HealthBar healthBar;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private GameObject damageText;
     [SerializeField] private TextMeshProUGUI name;
@@ -24,20 +27,26 @@ public class PigeonLogic : MonoBehaviour
     [SerializeField] private Outline outline;
     [SerializeField] private GameObject featherParticle;
 
+    [Space(10)] [Header("Variables")] 
+    [Range(1, 500)] [SerializeField] float walkRadius;
+    [Range(0.1f, 2f)] [SerializeField] private float runningTolerance;
+    [Range(1, 500)] [SerializeField] private float runningDistance;
+    
     private Animator animator;
     private NavMeshAgent agent;
     private bool isDead = false;
-    public bool isTaken = false;
     private Renderer pigeonMaterial;
     private MaterialSet materialSet;
-    
     public enum State
     {
-        GoingNowhere,
+        Wandering,
         GoingToPlayer,
         RunningFromPlayer,
+        Idle,
         InHands
     }
+
+    public State state = State.Wandering;
     
     private void Start()
     {
@@ -50,27 +59,43 @@ public class PigeonLogic : MonoBehaviour
 
     private void Update()
     {
-        if (!isDead && !isTaken)
+        if (!isDead)
         {
-            animator.SetFloat("Blend", agent.velocity.magnitude);
-            if (Vector3.Distance(transform.position, playerTransform.position) < 2f)
+            switch (state)
             {
-                animator.SetBool("Atack", true);
-                agent.isStopped = true;
-                SmoothlyRotateTowardsObj(playerTransform, 0.01f);
-            }
-            else
-            {
-                animator.SetBool("Atack", false);
-                agent.isStopped = false;
-                agent.SetDestination(playerTransform.position);
+                case State.Wandering:
+                    animator.SetFloat("Blend", agent.velocity.magnitude);
+                    if (agent.remainingDistance <= agent.stoppingDistance)
+                    {
+                        agent.speed = pigeonSpeed;
+                        agent.SetDestination(RandomNavMeshLocation());
+                    }
+                    break;
+                case State.GoingToPlayer:
+                    break;
+                case State.RunningFromPlayer:
+                    animator.SetFloat("Blend", agent.velocity.magnitude);
+                    if (agent.remainingDistance <= agent.stoppingDistance)
+                    {
+                        agent.speed = pigeonSpeed * 2;
+                        if (Vector3.Distance(transform.position, playerTransform.position) < pigeonRunningTriggerDistance)
+                        {
+                            agent.SetDestination(RandomNavMeshRunningLocation());
+                        }
+                        else
+                        {
+                            state = SetRandomState();
+                        }
+                    }
+                    break;
+                case State.Idle:
+                    break;
+                case State.InHands:
+                    transform.position = pigeonHolderTransform.position;
+                    break;
             }
         }
-        else if (isTaken && !isDead)
-        {
-            transform.position = pigeonHolderTransform.position;
-        }
-        
+
     }
 
     private void OnMouseOver()
@@ -92,12 +117,38 @@ public class PigeonLogic : MonoBehaviour
         outline.enabled = false;
         isReadyToBeHold = false;
     }
+    
+    private Vector3 RandomNavMeshRunningLocation()
+    {
+        Vector3 offset= transform.forward * runningDistance;
+        Vector3 position = offset + new Vector3(Random.Range(-runningTolerance, runningTolerance), transform.position.y, Random.Range(-runningTolerance, runningTolerance));
+        return position;
+    }
+
+    private Vector3 RandomNavMeshLocation()
+    {
+        Vector3 finalPosition = Vector3.zero;
+        Vector3 randomPosition = Random.insideUnitSphere * walkRadius;
+        randomPosition += transform.position;
+        if (NavMesh.SamplePosition(randomPosition, out NavMeshHit hit, walkRadius, 1))
+        {
+            finalPosition = hit.position;
+        }
+
+        return finalPosition;
+    }
 
     private void SmoothlyRotateTowardsObj(Transform target, float speed)
     {
         Vector3 direction = (target.position - transform.position).normalized;
         Quaternion rotationGoal = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotationGoal, speed); 
+    }
+
+    private State SetRandomState()
+    {
+        state = State.Wandering;
+        return state;
     }
 
     private void SetDifferenceOnStart()
@@ -109,14 +160,16 @@ public class PigeonLogic : MonoBehaviour
         materialSet = Constants.colors[color];
         pigeonMaterial.sharedMaterial = materialSet.primary;
         agent.speed = Random.Range(2f, 5f);
+        pigeonSpeed = agent.speed;
         agent.acceleration = Random.Range(11f, 13f);
         agent.angularSpeed = Random.Range(120f, 400f);
         float scale = Random.Range(0.55f, 0.6f);
         transform.localScale = new Vector3(scale,scale,scale);
     }
+    
     public void ApplyDamage(int damage)
     {
-        if (!isDead && !isTaken)
+        if (!isDead && state != State.InHands)
         {
             GameObject damageText1 = Instantiate(damageText, transform.position, Quaternion.identity);
             damageText1.transform.GetComponent<TextMeshPro>().text = damage.ToString();
@@ -164,7 +217,6 @@ public class PigeonLogic : MonoBehaviour
 
     public void Take()
     {
-        
         transform.SetParent(pigeonHolderTransform.parent);
         agent.enabled = false;
         transform.GetComponent<CapsuleCollider>().enabled = false;
@@ -172,13 +224,13 @@ public class PigeonLogic : MonoBehaviour
         transform.position = pigeonHolderTransform.position;
         transform.rotation = pigeonHolderTransform.rotation;
         Instantiate(featherParticle, transform.GetChild(0).position, Quaternion.identity);
-        isTaken = true;
+        state = State.InHands;
     }
 
     public void Place()
     {
         transform.SetParent(null);
-        isTaken = false;
+        state = State.RunningFromPlayer;
         agent.enabled = true;
         transform.GetComponent<CapsuleCollider>().enabled = true;
         healthBar.TurnOnBillboard();

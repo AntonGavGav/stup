@@ -176,6 +176,7 @@ MonoBehaviour:
   pigeonHolderTransform: {fileID: 947342297}
   outline: {fileID: 1535862809}
   featherParticle: {fileID: 7754774228232565034, guid: b059c69be832dcb40ac3a30d5f725ab8, type: 3}
+  walkRadius: 49
   isTaken: 0
 --- !u!195 &28914355
 NavMeshAgent:
@@ -1465,6 +1466,7 @@ MonoBehaviour:
   pigeonHolderTransform: {fileID: 947342297}
   outline: {fileID: 120006164}
   featherParticle: {fileID: 7754774228232565034, guid: b059c69be832dcb40ac3a30d5f725ab8, type: 3}
+  walkRadius: 27
   isTaken: 0
 --- !u!195 &138397329
 NavMeshAgent:
@@ -3992,6 +3994,7 @@ MonoBehaviour:
   pigeonHolderTransform: {fileID: 947342297}
   outline: {fileID: 741820578}
   featherParticle: {fileID: 7754774228232565034, guid: b059c69be832dcb40ac3a30d5f725ab8, type: 3}
+  walkRadius: 54
   isTaken: 0
 --- !u!195 &461290429
 NavMeshAgent:
@@ -6352,6 +6355,7 @@ MonoBehaviour:
   pigeonHolderTransform: {fileID: 947342297}
   outline: {fileID: 174713467}
   featherParticle: {fileID: 7754774228232565034, guid: b059c69be832dcb40ac3a30d5f725ab8, type: 3}
+  walkRadius: 36
   isTaken: 0
 --- !u!195 &737497121
 NavMeshAgent:
@@ -6816,6 +6820,7 @@ MonoBehaviour:
   pigeonHolderTransform: {fileID: 947342297}
   outline: {fileID: 602741601}
   featherParticle: {fileID: 7754774228232565034, guid: b059c69be832dcb40ac3a30d5f725ab8, type: 3}
+  walkRadius: 500
   isTaken: 0
 --- !u!195 &768434472
 NavMeshAgent:
@@ -13079,6 +13084,7 @@ MonoBehaviour:
   pigeonHolderTransform: {fileID: 947342297}
   outline: {fileID: 1694692988}
   featherParticle: {fileID: 7754774228232565034, guid: b059c69be832dcb40ac3a30d5f725ab8, type: 3}
+  walkRadius: 424
   isTaken: 0
 --- !u!195 &1447940891
 NavMeshAgent:
@@ -13997,6 +14003,7 @@ MonoBehaviour:
   pigeonHolderTransform: {fileID: 947342297}
   outline: {fileID: 771296437}
   featherParticle: {fileID: 7754774228232565034, guid: b059c69be832dcb40ac3a30d5f725ab8, type: 3}
+  walkRadius: 285
   isTaken: 0
 --- !u!195 &1570646148
 NavMeshAgent:
@@ -14232,6 +14239,7 @@ MonoBehaviour:
   pigeonHolderTransform: {fileID: 947342297}
   outline: {fileID: 506535390}
   featherParticle: {fileID: 7754774228232565034, guid: b059c69be832dcb40ac3a30d5f725ab8, type: 3}
+  walkRadius: 136
   isTaken: 0
 --- !u!195 &1588771003
 NavMeshAgent:
@@ -15633,6 +15641,7 @@ MonoBehaviour:
   pigeonHolderTransform: {fileID: 947342297}
   outline: {fileID: 7600434489737938105}
   featherParticle: {fileID: 7754774228232565034, guid: b059c69be832dcb40ac3a30d5f725ab8, type: 3}
+  walkRadius: 30
   isTaken: 0
 --- !u!1 &1861749123
 GameObject:
