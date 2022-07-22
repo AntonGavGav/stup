@@ -58,13 +58,13 @@ public class Arms : MonoBehaviour
             if(Physics.Raycast(ray, out hit) && hit.transform.GetComponent<PigeonLogic>() != null)
             {
                 pigeonToBeHoldLogic = hit.transform.GetComponent<PigeonLogic>();
-                if (pigeonToBeHoldLogic.state != PigeonLogic.State.InHands)
+                if (pigeonToBeHoldLogic.state != PigeonLogic.State.InHands && Vector3.Distance(hit.transform.position, transform.position) < 3f)
                 {
                     LeftArm.SetActive(true);
                     leftHandAnimator.enabled = true;
                     rightHandAnimator.SetBool("HoldPigeon", true);
                     leftHandAnimator.SetBool("HoldPigeon", true);
-                    isPigeonInHands = true;
+                    isPigeonInHands = true;  
                 }
             }
             

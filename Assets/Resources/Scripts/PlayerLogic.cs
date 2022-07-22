@@ -29,6 +29,10 @@ public class PlayerLogic : MonoBehaviour
     private void FixedUpdate()
     {
         Gravity();
+    }
+
+    private void Update()
+    {
         Movement();
     }
 

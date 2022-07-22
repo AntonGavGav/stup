@@ -33,5 +33,4 @@ public class AnimationEventsController : MonoBehaviour
 
         leftHandAnimator.enabled = false;
     }
-    
 }

@@ -64,20 +64,21 @@ public class PigeonLogic : MonoBehaviour
             switch (state)
             {
                 case State.Wandering:
+                    agent.speed = pigeonSpeed;
                     animator.SetFloat("Blend", agent.velocity.magnitude);
                     if (agent.remainingDistance <= agent.stoppingDistance)
                     {
-                        agent.speed = pigeonSpeed;
                         agent.SetDestination(RandomNavMeshLocation());
+                        state = SetRandomState(); 
                     }
                     break;
                 case State.GoingToPlayer:
                     break;
                 case State.RunningFromPlayer:
+                    agent.speed = pigeonSpeed * 2;
                     animator.SetFloat("Blend", agent.velocity.magnitude);
                     if (agent.remainingDistance <= agent.stoppingDistance)
                     {
-                        agent.speed = pigeonSpeed * 2;
                         if (Vector3.Distance(transform.position, playerTransform.position) < pigeonRunningTriggerDistance)
                         {
                             agent.SetDestination(RandomNavMeshRunningLocation());
@@ -89,6 +90,9 @@ public class PigeonLogic : MonoBehaviour
                     }
                     break;
                 case State.Idle:
+                    agent.speed = 0f;
+                    animator.SetFloat("Blend", agent.velocity.magnitude);
+                    StartCoroutine(SetRandomStateAfterTime(Random.Range(5f, 25f)));
                     break;
                 case State.InHands:
                     transform.position = pigeonHolderTransform.position;
@@ -147,8 +151,24 @@ public class PigeonLogic : MonoBehaviour
 
     private State SetRandomState()
     {
-        state = State.Wandering;
+        if (Random.Range(0,3) == 0)
+        {
+            state = State.Idle;
+        }
+        else
+        {
+            state = State.Wandering;
+        }
         return state;
+    }
+    IEnumerator SetRandomStateAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        if (state != State.InHands)
+        {
+            state = State.Wandering;
+        }
+        yield return new WaitForSeconds(time);
     }
 
     private void SetDifferenceOnStart()
@@ -159,14 +179,14 @@ public class PigeonLogic : MonoBehaviour
         name.text = Constants.PgNames[Random.Range(0, Constants.PgNames.Length)];
         materialSet = Constants.colors[color];
         pigeonMaterial.sharedMaterial = materialSet.primary;
-        agent.speed = Random.Range(2f, 5f);
+        agent.speed = Random.Range(2.6f, 5f);
         pigeonSpeed = agent.speed;
         agent.acceleration = Random.Range(11f, 13f);
         agent.angularSpeed = Random.Range(120f, 400f);
         float scale = Random.Range(0.55f, 0.6f);
         transform.localScale = new Vector3(scale,scale,scale);
     }
-    
+
     public void ApplyDamage(int damage)
     {
         if (!isDead && state != State.InHands)
@@ -200,7 +220,6 @@ public class PigeonLogic : MonoBehaviour
         Destroy(animator);
         Destroy(agent);
         Destroy(transform.GetComponent<CapsuleCollider>());
-        Destroy(transform.GetChild(0).GetComponent<PigeonAtack>());
         healthBar.HealthBarDestroy();
         Collider[] colliders = gameObject.GetComponentsInChildren<Collider>();
         Rigidbody[] rigidbodies = gameObject.GetComponentsInChildren<Rigidbody>();
@@ -217,6 +236,7 @@ public class PigeonLogic : MonoBehaviour
 
     public void Take()
     {
+        animator.SetBool("InHands", true);
         transform.SetParent(pigeonHolderTransform.parent);
         agent.enabled = false;
         transform.GetComponent<CapsuleCollider>().enabled = false;
@@ -230,10 +250,11 @@ public class PigeonLogic : MonoBehaviour
     public void Place()
     {
         transform.SetParent(null);
-        state = State.RunningFromPlayer;
         agent.enabled = true;
         transform.GetComponent<CapsuleCollider>().enabled = true;
         healthBar.TurnOnBillboard();
+        animator.SetBool("InHands", false);
+        state = State.RunningFromPlayer;
     }
     
 }
