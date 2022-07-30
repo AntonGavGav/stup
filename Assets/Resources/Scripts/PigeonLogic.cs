@@ -26,6 +26,7 @@ public class PigeonLogic : MonoBehaviour
     [SerializeField] private Transform pigeonHolderTransform;
     [SerializeField] private Outline outline;
     [SerializeField] private GameObject featherParticle;
+    [SerializeField] private GameObject pigeonTakeTip;
 
     [Space(10)] [Header("Variables")] 
     [Range(1, 500)] [SerializeField] float walkRadius;
@@ -33,23 +34,27 @@ public class PigeonLogic : MonoBehaviour
     [Range(1, 500)] [SerializeField] private float runningDistance;
     
     private Animator animator;
+    private Animator pigeonTakeTipAnimator;
     private NavMeshAgent agent;
     private bool isDead = false;
     private Renderer pigeonMaterial;
     private MaterialSet materialSet;
+    private float timeRemaining = 4;
     public enum State
     {
         Wandering,
         GoingToPlayer,
         RunningFromPlayer,
         Idle,
-        InHands
+        InHands,
+        Dead
     }
 
     public State state = State.Wandering;
     
     private void Start()
     {
+        pigeonTakeTipAnimator = pigeonTakeTip.GetComponent<Animator>();
         animator = transform.GetChild(0).GetComponent<Animator>();
         agent = transform.GetComponent<NavMeshAgent>();
         pigeonMaterial = transform.GetChild(0).GetChild(0).GetComponent<Renderer>();
@@ -59,8 +64,7 @@ public class PigeonLogic : MonoBehaviour
 
     private void Update()
     {
-        if (!isDead)
-        {
+        
             switch (state)
             {
                 case State.Wandering:
@@ -97,8 +101,10 @@ public class PigeonLogic : MonoBehaviour
                 case State.InHands:
                     transform.position = pigeonHolderTransform.position;
                     break;
+                case State.Dead:
+                    break;
             }
-        }
+        
 
     }
 
@@ -114,12 +120,22 @@ public class PigeonLogic : MonoBehaviour
             outline.enabled = false;
             isReadyToBeHold = false;
         }
+        if (timeRemaining > 0)
+        {
+            timeRemaining -= Time.deltaTime;
+        }
+        else if(timeRemaining <= 0 && pigeonTakeTip != null)
+        {
+            pigeonTakeTip.SetActive(true);
+            pigeonTakeTip = null;
+        }
     }
 
     private void OnMouseExit()
     {
         outline.enabled = false;
         isReadyToBeHold = false;
+        timeRemaining = 4;
     }
     
     private Vector3 RandomNavMeshRunningLocation()
@@ -245,6 +261,12 @@ public class PigeonLogic : MonoBehaviour
         transform.rotation = pigeonHolderTransform.rotation;
         Instantiate(featherParticle, transform.GetChild(0).position, Quaternion.identity);
         state = State.InHands;
+        if (pigeonTakeTipAnimator != null)
+        {
+            pigeonTakeTipAnimator.SetTrigger("Outro");
+            pigeonTakeTipAnimator = null;
+        }
+        
     }
 
     public void Place()

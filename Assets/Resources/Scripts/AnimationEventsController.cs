@@ -11,7 +11,10 @@ public class AnimationEventsController : MonoBehaviour
     private PigeonLogic enemyLogic;
     private void Start()
     {
-        leftHandAnimator = LeftArm.transform.GetComponent<Animator>();
+        if (leftHandAnimator != null)
+        {
+            leftHandAnimator = LeftArm.transform.GetComponent<Animator>();
+        }
     }
 
     public void AnimateTakePigeon()
@@ -32,5 +35,10 @@ public class AnimationEventsController : MonoBehaviour
         _arms.isWatchingTime = false;
 
         leftHandAnimator.enabled = false;
+    }
+
+    public void EndOfPigeonTipLife()
+    {
+        Destroy(gameObject);
     }
 }
