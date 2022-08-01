@@ -1,16 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Resources.Scripts;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-public class PigeonLogic : MonoBehaviour
+public class PigeonLogic : MonoBehaviour, ITakeable
 {
-    [HideInInspector]public bool isReadyToBeHold = false;
-    
     private int enemyHealth;
     private float pigeonSpeed;
     private int pigeonRunningTriggerDistance = 6;
@@ -40,6 +39,7 @@ public class PigeonLogic : MonoBehaviour
     private Renderer pigeonMaterial;
     private MaterialSet materialSet;
     private float timeRemaining = 4;
+    
     public enum State
     {
         Wandering,
@@ -113,28 +113,26 @@ public class PigeonLogic : MonoBehaviour
         if (Vector3.Distance(playerTransform.position, transform.position) < 3f)
         {
             outline.enabled = true;
-            isReadyToBeHold = true;
+            if (timeRemaining > 0)
+            {
+                timeRemaining -= Time.deltaTime;
+            }
+            else if(timeRemaining <= 0 && pigeonTakeTip != null)
+            {
+                pigeonTakeTip.SetActive(true);
+                pigeonTakeTip = null;
+            }
         }
         else
         {
             outline.enabled = false;
-            isReadyToBeHold = false;
         }
-        if (timeRemaining > 0)
-        {
-            timeRemaining -= Time.deltaTime;
-        }
-        else if(timeRemaining <= 0 && pigeonTakeTip != null)
-        {
-            pigeonTakeTip.SetActive(true);
-            pigeonTakeTip = null;
-        }
+
     }
 
     private void OnMouseExit()
     {
         outline.enabled = false;
-        isReadyToBeHold = false;
         timeRemaining = 4;
     }
     
@@ -182,7 +180,14 @@ public class PigeonLogic : MonoBehaviour
         yield return new WaitForSeconds(time);
         if (state != State.InHands)
         {
-            state = State.Wandering;
+            if (state == State.RunningFromPlayer)
+            {
+                state = State.RunningFromPlayer;
+            }
+            else
+            {
+                state = State.Wandering;
+            }
         }
         yield return new WaitForSeconds(time);
     }
@@ -252,6 +257,39 @@ public class PigeonLogic : MonoBehaviour
 
     public void Take()
     {
+        FindObjectOfType<Arms>().GetComponent<Arms>().AnimateHandsTake();
+    }
+
+    public void Place()
+    {
+        FindObjectOfType<Arms>().GetComponent<Arms>().AnimateHandsPlace();
+    }
+    
+    public GameObject returnObject()
+    {
+        return gameObject;
+    }
+
+    public bool IsReadyToBeHold(Transform armsTransform)
+    {
+        if(state != PigeonLogic.State.InHands && Vector3.Distance(transform.position, armsTransform.position )< 3f){
+            return true;
+        }
+
+        return false;
+    }
+
+    public void GraficalPlace()
+    {
+        transform.SetParent(null);
+        agent.enabled = true;
+        transform.GetComponent<CapsuleCollider>().enabled = true;
+        healthBar.TurnOnBillboard();
+        animator.SetBool("InHands", false);
+        state = State.RunningFromPlayer;
+    }
+    public void GraficalTake()
+    {
         animator.SetBool("InHands", true);
         transform.SetParent(pigeonHolderTransform.parent);
         agent.enabled = false;
@@ -266,17 +304,6 @@ public class PigeonLogic : MonoBehaviour
             pigeonTakeTipAnimator.SetTrigger("Outro");
             pigeonTakeTipAnimator = null;
         }
-        
-    }
-
-    public void Place()
-    {
-        transform.SetParent(null);
-        agent.enabled = true;
-        transform.GetComponent<CapsuleCollider>().enabled = true;
-        healthBar.TurnOnBillboard();
-        animator.SetBool("InHands", false);
-        state = State.RunningFromPlayer;
     }
     
 }

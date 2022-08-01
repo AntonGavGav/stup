@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Resources.Scripts;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -11,6 +12,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] private GameObject slotPrefab;
     private float slotHeight;
     private Transform firstSlotTransform = null;
+    private IconProvider[] icons= new IconProvider [6];
 
     private void Start()
     {
@@ -28,20 +30,7 @@ public class Inventory : MonoBehaviour
     private void AddSlot()
     {
         slotCount += 1;
-        ChangeBodyHeight();
-        if (firstSlotTransform == null && slotCount == 1)
-        {
-            GameObject slot = Instantiate(slotPrefab, transform.position, quaternion.identity, transform);
-            firstSlotTransform = slot.transform;
-        }
-        else
-        {
-            GameObject slot = Instantiate(slotPrefab,
-                firstSlotTransform.position,
-                Quaternion.identity, transform);
-            slot.transform.GetComponent<RectTransform>().anchoredPosition =
-                new Vector2(0f, GetSlotPosition());
-        }
+        Instantiate(slotPrefab, transform.position, quaternion.identity, transform);
     }
 
     private void RemoveSlot()

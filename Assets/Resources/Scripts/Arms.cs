@@ -1,13 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Resources.Scripts;
 using UnityEngine;
 
 public class Arms : MonoBehaviour
 {
+    private AnimationEventsController armsAnimationEventsController;
     private GameObject LeftArm;
     private GameObject RightArm;
     public PigeonLogic pigeonToBeHoldLogic;
+    public ITakeable ItemToBeHoldITakeable;
     private Animator leftHandAnimator;
     private Animator rightHandAnimator;
     private bool isPigeonInHands = false;
@@ -20,6 +23,9 @@ public class Arms : MonoBehaviour
         RightArm = transform.GetChild(1).gameObject;
         leftHandAnimator = LeftArm.transform.GetComponent<Animator>();
         rightHandAnimator = RightArm.transform.GetComponent<Animator>();
+        armsAnimationEventsController = LeftArm.GetComponent<AnimationEventsController>();
+        armsAnimationEventsController.Placed += PlacePigeon;
+        armsAnimationEventsController.Taken += TakePigeon;
     }
 
     private void FixedUpdate()
@@ -29,7 +35,7 @@ public class Arms : MonoBehaviour
 
     private void Update()
     {
-        TakePigeon();
+        TakeSomething();
     }
 
 
@@ -47,37 +53,53 @@ public class Arms : MonoBehaviour
             leftHandAnimator.SetBool("ShowClock", false);
         }
     }
+    
 
-    private void TakePigeon()
+    private void TakeSomething()
     {
-        
-        if (Input.GetKeyDown(KeyCode.H) && !isPigeonInHands && !isWatchingTime)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if(Physics.Raycast(ray, out hit) && hit.transform.GetComponent<PigeonLogic>() != null)
+        if (Input.GetKeyDown(KeyCode.E) && !isPigeonInHands && !isWatchingTime)
             {
-                pigeonToBeHoldLogic = hit.transform.GetComponent<PigeonLogic>();
-                if (pigeonToBeHoldLogic.state != PigeonLogic.State.InHands && Vector3.Distance(hit.transform.position, transform.position) < 3f)
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if(Physics.Raycast(ray, out hit) && hit.transform.GetComponent<ITakeable>() != null)
                 {
-                    LeftArm.SetActive(true);
-                    leftHandAnimator.enabled = true;
-                    rightHandAnimator.SetBool("HoldPigeon", true);
-                    leftHandAnimator.SetBool("HoldPigeon", true);
-                    isPigeonInHands = true;  
+                    ItemToBeHoldITakeable = hit.transform.GetComponent<ITakeable>();
+                    if (hit.transform.GetComponent<ITakeable>().IsReadyToBeHold(transform))
+                    {
+                        ItemToBeHoldITakeable.Take();
+                    }
                 }
             }
-            
-        }
-        else if(Input.GetKeyDown(KeyCode.H) && isPigeonInHands && !isWatchingTime && pigeonToBeHoldLogic.state == PigeonLogic.State.InHands)
-        {
-            pigeonToBeHoldLogic = null;
-            rightHandAnimator.SetBool("HoldPigeon", false);
-            leftHandAnimator.SetBool("HoldPigeon", false);
-            isPigeonInHands = false;
-        } 
+            else if(Input.GetKeyDown(KeyCode.E) && isPigeonInHands && !isWatchingTime)
+            {
+                ItemToBeHoldITakeable.Place();
+            }
     }
-    
 
-    
+    public void AnimateHandsTake()
+    {
+        LeftArm.SetActive(true);
+        leftHandAnimator.enabled = true;
+        rightHandAnimator.SetBool("HoldPigeon", true);
+        leftHandAnimator.SetBool("HoldPigeon", true);
+        isPigeonInHands = true;  
+    }
+
+    public void AnimateHandsPlace()
+    {
+        rightHandAnimator.SetBool("HoldPigeon", false);
+        leftHandAnimator.SetBool("HoldPigeon", false);
+        isPigeonInHands = false;
+    }
+    private void TakePigeon()
+    {
+        ItemToBeHoldITakeable.returnObject().GetComponent<PigeonLogic>().GraficalTake();
+    }
+
+    private void PlacePigeon()
+    {
+        ItemToBeHoldITakeable.returnObject().GetComponent<PigeonLogic>().GraficalPlace();
+        ItemToBeHoldITakeable = null;
+    }
+
 }

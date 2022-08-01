@@ -5,21 +5,28 @@ using Resources.Scripts;
 using UnityEngine;
 using Random = System.Random;
 
-public class BreadWeapon : MonoBehaviour
+public class BreadWeapon : MonoBehaviour, IconProvider, ITakeable
 {
     private Weapon weapon = new Weapon("Bread", 20f, 0f);
+    [SerializeField] private Sprite imageOnSlot;
+
+
+
     public enum State
     {
         ReadyToAtack,
-        Atacking
+        Atacking,
+        NotInUse
     }
 
     public State state;
     private Animator animator;
+
+    
+
     private void Start()
     {
         animator = transform.GetComponent<Animator>();
-        state = State.ReadyToAtack;
     }
 
     private void Update()
@@ -40,6 +47,10 @@ public class BreadWeapon : MonoBehaviour
                 break;
             case  State.Atacking:
                 break;
+            case State.NotInUse:
+                GetComponent<Rigidbody>().isKinematic = false;
+                GetComponent<BoxCollider>().enabled = true;
+                break;
         }
     }
     
@@ -47,4 +58,34 @@ public class BreadWeapon : MonoBehaviour
     {
         state = State.ReadyToAtack;
     }
+
+    private void TakeBread()
+    {
+        
+    }
+    public Sprite GetItemSprite()
+    {
+        Debug.Log("Taken");
+        return imageOnSlot;
+    }
+
+    public void Take()
+    {
+        Debug.Log("IsTaken");
+    }
+
+    public void Place()
+    {
+    }
+
+    public GameObject returnObject()
+    {
+        return gameObject;
+    }
+
+    public bool IsReadyToBeHold(Transform armsTransform)
+    {
+        return true;
+    }
+    
 }

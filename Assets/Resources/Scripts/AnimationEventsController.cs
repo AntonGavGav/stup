@@ -9,6 +9,12 @@ public class AnimationEventsController : MonoBehaviour
     private Animator leftHandAnimator;
     public Arms _arms;
     private PigeonLogic enemyLogic;
+    public delegate void PlaceHandler();
+
+    public delegate void TakeHandler();
+
+    public event PlaceHandler Placed;
+    public event TakeHandler Taken;
     private void Start()
     {
         if (leftHandAnimator != null)
@@ -19,14 +25,12 @@ public class AnimationEventsController : MonoBehaviour
 
     public void AnimateTakePigeon()
     {
-        enemyLogic = _arms.pigeonToBeHoldLogic;
-        enemyLogic.Take();
+        Taken?.Invoke();
     }
 
     public void AnimatePlacePigeon()
     {
-        enemyLogic.Place();
-        enemyLogic = null;
+        Placed?.Invoke();
     }
 
     public void EndOfClockAnim()
