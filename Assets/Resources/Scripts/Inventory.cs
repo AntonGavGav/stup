@@ -8,45 +8,58 @@ using UnityEngine.Rendering;
 
 public class Inventory : MonoBehaviour
 {
-    private int slotCount = 0;
     [SerializeField] private GameObject slotPrefab;
     private float slotHeight;
-    private Transform firstSlotTransform = null;
-    private IconProvider[] icons= new IconProvider [6];
+    private List<Slot> slots = new List<Slot>();
+    private int prevSelectedSlot = -1;
+    
+    public int slotCount { get; set; } = 0;
+    public int selectedSlot { get; set; } = 1;
 
     private void Start()
     {
         slotHeight = slotPrefab.GetComponent<RectTransform>().sizeDelta.y;
     }
+    
 
-    private void Update()
+    public void AddSlot(Sprite sprite, ISelectable slotObjSelectable)
     {
-        if (Input.GetKeyDown("space"))
+        slotCount += 1;
+        GameObject slot = Instantiate(slotPrefab, transform.position, quaternion.identity, transform);
+        slots.Add(slot.GetComponent<Slot>());
+        slots[slotCount-1].AddSprite(sprite);
+        slots[slotCount-1].AddLinkedToSlotObjectSelectable(slotObjSelectable);
+        if (slotCount == 1)
         {
-            AddSlot();
+            UpdateSelectSlot();
+        }
+        else
+        {
+            slots[slotCount-1].DeselectObjSelectable();
         }
     }
 
-    private void AddSlot()
-    {
-        slotCount += 1;
-        Instantiate(slotPrefab, transform.position, quaternion.identity, transform);
-    }
-
+    
     private void RemoveSlot()
     {
         slotCount -= 1;
-        ChangeBodyHeight();
+        //dont forget to deselect if slot selected
     }
+    
 
-    private void ChangeBodyHeight()
+    public void UpdateSelectSlot()
     {
-        float height = (float)(slotHeight * slotCount + 2 * (slotHeight/ 8.33));
-        gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(gameObject.GetComponent<RectTransform>().sizeDelta.x, height);
-    }
-
-    private float GetSlotPosition()
-    {
-        return -((slotCount-1) * slotHeight)-slotHeight/1.6f;
+        if (selectedSlot <= slotCount)
+        {
+            if (!slots[selectedSlot - 1].IsSelected())
+            {
+                slots[selectedSlot - 1].Select();
+                if (prevSelectedSlot != -1)
+                {
+                    slots[prevSelectedSlot - 1].Deselect();
+                }
+                prevSelectedSlot = selectedSlot;
+            }
+        }
     }
 }

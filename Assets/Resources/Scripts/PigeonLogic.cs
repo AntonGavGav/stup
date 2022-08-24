@@ -239,6 +239,7 @@ public class PigeonLogic : MonoBehaviour, ITakeable
     {
         isDead = true;
         Destroy(animator);
+        Destroy(outline);
         Destroy(agent);
         Destroy(transform.GetComponent<CapsuleCollider>());
         healthBar.HealthBarDestroy();

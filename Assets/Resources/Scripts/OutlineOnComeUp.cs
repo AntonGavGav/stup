@@ -10,7 +10,14 @@ public class OutlineOnComeUp : MonoBehaviour
     private void Start()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        outline = GetComponent<Outline>();
+        if (GetComponent<Outline>() != null)
+        {
+            outline = GetComponent<Outline>();
+        }
+        else
+        {
+            outline = transform.GetChild(0).GetComponent<Outline>();
+        }
     }
     private void OnMouseOver()
     {

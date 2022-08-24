@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Resources.Scripts;
 using UnityEngine;
 
@@ -13,9 +14,10 @@ public class Arms : MonoBehaviour
     public ITakeable ItemToBeHoldITakeable;
     private Animator leftHandAnimator;
     private Animator rightHandAnimator;
+    private Inventory inventory;
     private bool isPigeonInHands = false;
     public bool isWatchingTime = false;
-    
+
 
     private void Start()
     {
@@ -26,6 +28,7 @@ public class Arms : MonoBehaviour
         armsAnimationEventsController = LeftArm.GetComponent<AnimationEventsController>();
         armsAnimationEventsController.Placed += PlacePigeon;
         armsAnimationEventsController.Taken += TakePigeon;
+        inventory = FindObjectOfType<Inventory>().GetComponent<Inventory>();
     }
 
     private void FixedUpdate()
@@ -35,6 +38,7 @@ public class Arms : MonoBehaviour
 
     private void Update()
     {
+        SlotsScrollig();
         TakeSomething();
     }
 
@@ -67,6 +71,11 @@ public class Arms : MonoBehaviour
                     if (hit.transform.GetComponent<ITakeable>().IsReadyToBeHold(transform))
                     {
                         ItemToBeHoldITakeable.Take();
+                        if (ItemToBeHoldITakeable.returnObject().GetComponent<IconProvider>() != null)
+                        {
+                            Sprite sprite = ItemToBeHoldITakeable.returnObject().GetComponent<IconProvider>().GetItemSprite();
+                            inventory.AddSlot(sprite, ItemToBeHoldITakeable.returnObject().GetComponent<ISelectable>());
+                        }
                     }
                 }
             }
@@ -76,6 +85,30 @@ public class Arms : MonoBehaviour
             }
     }
 
+    private void SlotsScrollig()
+    {
+        if (inventory.slotCount != 0)
+        {
+            if (Input.GetAxis("Mouse ScrollWheel") < 0)
+            {
+                if (inventory.selectedSlot + 1 <= inventory.slotCount)
+                {
+                    inventory.selectedSlot++;
+                }
+
+                inventory.UpdateSelectSlot();
+            }
+            else if (Input.GetAxis("Mouse ScrollWheel") > 0)
+            {
+                if (inventory.selectedSlot - 1 >= 1)
+                {
+                    inventory.selectedSlot--;
+                }
+
+                inventory.UpdateSelectSlot();
+            }
+        }
+    }
     public void AnimateHandsTake()
     {
         LeftArm.SetActive(true);
